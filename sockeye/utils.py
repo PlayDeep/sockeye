@@ -900,6 +900,22 @@ def grouper(iterable: Iterable, size: int) -> Iterable:
         yield chunk
 
 
+import random
+
+def grouper_random(iterable: Iterable, size: int) -> Iterable:
+    random.seed(13)
+    chunk = []
+    sampled_size = random.randint(1, size)
+    for elem in iterable:
+        chunk.append(elem)
+        if len(chunk) == sampled_size:
+            yield chunk
+            chunk = []
+            sampled_size = random.randint(1, size)
+    if chunk:
+        yield chunk
+
+
 def metric_value_is_better(new: float, old: float, metric: str) -> bool:
     """
     Returns true if new value is strictly better than old for given metric.

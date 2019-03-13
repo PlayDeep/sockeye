@@ -24,7 +24,7 @@ from typing import Generator, Optional, List
 from sockeye.lexicon import TopKLexicon
 from sockeye.log import setup_main_logger
 from sockeye.output_handler import get_output_handler, OutputHandler
-from sockeye.utils import determine_context, log_basic_info, check_condition, grouper
+from sockeye.utils import determine_context, log_basic_info, check_condition, grouper_random
 from . import arguments
 from . import constants as C
 from . import data_io
@@ -192,7 +192,7 @@ def read_and_translate(translator: inference.Translator,
     logger.info("Translating...")
 
     total_time, total_lines = 0.0, 0
-    for chunk in grouper(make_inputs(input_file, translator, input_is_json, input_factors), size=chunk_size):
+    for chunk in grouper_random(make_inputs(input_file, translator, input_is_json, input_factors), size=chunk_size):
         chunk_time = translate(output_handler, chunk, translator)
         total_lines += len(chunk)
         total_time += chunk_time
