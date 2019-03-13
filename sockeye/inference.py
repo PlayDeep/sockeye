@@ -35,7 +35,7 @@ from . import model
 from . import utils
 from . import vocab
 from .log import is_python34
-
+import pdb
 logger = logging.getLogger(__name__)
 
 
@@ -1819,13 +1819,14 @@ class Translator:
             # (1) obtain next predictions and advance models' state
             # target_dists: (batch_size * beam_size, target_vocab_size)
             # attention_scores: (batch_size * beam_size, bucket_key)
+            pdb.set_trace()
             target_dists, attention_scores, model_states = self._decode_step(prev_word=best_word_indices,
                                                                              step=t,
                                                                              source_length=source_length,
                                                                              states=model_states,
                                                                              models_output_layer_w=models_output_layer_w,
                                                                              models_output_layer_b=models_output_layer_b)
-
+            pdb.set_trace()
             # (2) Produces the accumulated cost of target words in each row.
             # There is special treatment for finished and inactive rows: inactive rows are inf everywhere;
             # finished rows are inf everywhere except column zero, which holds the accumulated model score
@@ -1849,8 +1850,9 @@ class Translator:
                 # of the first row only by setting all other rows to inf
                 if t == 1 and not self.skip_topk:
                     scores *= first_step_mask
-
+                pdb.set_trace()
                 best_hyp_indices, best_word_indices, scores_accumulated = self._top(scores, offset)
+                pdb.set_trace()
 
             # Constraints for constrained decoding are processed sentence by sentence
             if any(raw_constraint_list):
