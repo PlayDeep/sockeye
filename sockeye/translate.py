@@ -24,7 +24,7 @@ from typing import Generator, Optional, List
 from sockeye.lexicon import TopKLexicon
 from sockeye.log import setup_main_logger
 from sockeye.output_handler import get_output_handler, OutputHandler
-from sockeye.utils import determine_context, log_basic_info, check_condition, grouper_random
+from sockeye.utils import determine_context, log_basic_info, check_condition, grouper_random, grouper
 from . import arguments
 from . import constants as C
 from . import data_io
@@ -188,6 +188,11 @@ def read_and_translate(translator: inference.Translator,
             logger.warning("You specified a chunk size (%d) smaller than the max batch size (%d). This will lead to "
                            "a reduction in translation speed. Consider choosing a larger chunk size." % (chunk_size,
                                                                                                          batch_size))
+
+    logger.info("warmup")
+    for chunk in grouper(make_inputs(input_file, translator, input_is_json, input_factors), size=chunk_size):
+        translate(output_handler, chunk, translator)
+        break
 
     logger.info("Translating...")
 
