@@ -39,6 +39,10 @@ from .log import is_python34
 logger = logging.getLogger(__name__)
 
 
+STATIC_ALLOC = False
+STATIC_SHAPE = False
+
+
 class InferenceModel(model.SockeyeModel):
     """
     InferenceModel is a SockeyeModel that supports three operations used for inference/decoding:
@@ -1260,7 +1264,7 @@ class Translator:
 
         self._update_scores = UpdateScores()
         self._update_scores.initialize(ctx=self.context)
-        self._update_scores.hybridize(static_alloc=True, static_shape=True)
+        self._update_scores.hybridize(static_alloc=STATIC_ALLOC, static_shape=STATIC_SHAPE)
 
         # Vocabulary selection leads to different vocabulary sizes across requests. Hence, we cannot use a
         # statically-shaped HybridBlock for the topk operation in this case; resorting to imperative topk
@@ -1277,7 +1281,7 @@ class Translator:
                                  vocab_size=len(self.vocab_target))  # type: mx.gluon.HybridBlock
 
             self._top.initialize(ctx=self.context)
-            self._top.hybridize(static_alloc=True, static_shape=True)
+            self._top.hybridize(static_alloc=STATIC_ALLOC, static_shape=STATIC_SHAPE)
         else:
             if self.skip_topk:
                 self._top = utils.top1  # type: Callable
@@ -1286,18 +1290,18 @@ class Translator:
 
         self._sort_by_index = SortByIndex()
         self._sort_by_index.initialize(ctx=self.context)
-        self._sort_by_index.hybridize(static_alloc=True, static_shape=True)
+        self._sort_by_index.hybridize(static_alloc=STATIC_ALLOC, static_shape=STATIC_SHAPE)
 
         self._update_finished = NormalizeAndUpdateFinished(pad_id=C.PAD_ID,
                                                            eos_id=self.vocab_target[C.EOS_SYMBOL],
                                                            length_penalty_alpha=self.length_penalty.alpha,
                                                            length_penalty_beta=self.length_penalty.beta)
         self._update_finished.initialize(ctx=self.context)
-        self._update_finished.hybridize(static_alloc=True, static_shape=True)
+        self._update_finished.hybridize(static_alloc=STATIC_ALLOC, static_shape=STATIC_SHAPE)
 
         self._prune_hyps = PruneHypotheses(threshold=self.beam_prune, beam_size=self.beam_size)
         self._prune_hyps.initialize(ctx=self.context)
-        self._prune_hyps.hybridize(static_alloc=True, static_shape=True)
+        self._prune_hyps.hybridize(static_alloc=STATIC_ALLOC, static_shape=STATIC_SHAPE)
 
         self.global_avoid_trie = None
         if avoid_list is not None:

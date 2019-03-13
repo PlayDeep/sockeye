@@ -189,10 +189,10 @@ def read_and_translate(translator: inference.Translator,
                            "a reduction in translation speed. Consider choosing a larger chunk size." % (chunk_size,
                                                                                                          batch_size))
 
-    logger.info("warmup")
-    for chunk in grouper(make_inputs(input_file, translator, input_is_json, input_factors), size=chunk_size):
-        translate(output_handler, chunk, translator)
-        break
+    #logger.info("warmup")
+    #for chunk in grouper(make_inputs(input_file, translator, input_is_json, input_factors), size=chunk_size):
+    #    translate(output_handler, chunk, translator)
+    #    break
 
     logger.info("Translating...")
 
